@@ -25,9 +25,9 @@ class TruyenFull
 
   public function __construct($file_save, $cron_url, $sleep = 5)
   {
+    $this->setFileSave($file_save);
+    $this->setCronUrl($cron_url);
     $this->client = new Client();
-    $this->file_save = $file_save;
-    $this->cron_url = $cron_url;
     $this->sleep = $sleep;
     $this->cron();
   }
