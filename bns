@@ -67,7 +67,7 @@ class Truyen
   private function cronNext()
   {
     $linknext = $this->getLinkNext();
-    if ($linknext == "javascript:void(0)") :
+    if (!$linknext || $linknext == "javascript:void(0)") :
       print "\n ================= Crawl Successfuly! =================\n";
       exit();
     endif;
