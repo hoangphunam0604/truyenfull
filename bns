@@ -7,7 +7,7 @@ set_time_limit(-1);
 if (!isset($argv[1]) || !isset($argv[2]))
   exit("Thiếu đối số: [tên file lưu] [link crawl] [sleep = 5]");
 
-$truyenfull = new Truyen($argv[1], $argv[2], isset($argv[3]) ? $argv[3] : 1);
+$truyen = new Truyen($argv[1], $argv[2], isset($argv[3]) ? $argv[3] : 1);
 
 
 
@@ -49,9 +49,9 @@ class Truyen
 
   public function saveData()
   {
-    $title = $this->crawler->filter('a.chapter-title', 0)->text();
+    $title = $this->crawler->filter('#chuong-title', 0)->text();
     echo $title . "\n";
-    $content = $this->crawler->filter('div.chapter-c', 0)->html();
+    $content = $this->crawler->filter('#noi-dung', 0)->html();
     $content = str_replace('<br>', "\n", $content);
     $content = str_replace('</p>', "\n", $content);
     $content = strip_tags($content);
@@ -62,7 +62,7 @@ class Truyen
   }
   protected function getLinkNext()
   {
-    return $this->crawler->filter('#next_chap', 0)->attr('href');
+    return $this->crawler->filter('.page-next', 0)->attr('href');
   }
   private function cronNext()
   {
