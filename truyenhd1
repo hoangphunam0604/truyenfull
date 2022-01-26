@@ -62,12 +62,16 @@ class Truyen
   }
   protected function getLinkNext()
   {
-    return $this->crawler->filter('.next-chap > a')->eq(1)->attr('href');
+    try {
+      return $this->crawler->filter('.next-chap > a')->eq(3)->attr('href');
+    } catch (\Exception $e) {
+      return null;
+    }
   }
   private function cronNext()
   {
     $linknext = $this->getLinkNext();
-    if ($linknext == "javascript:void(0)") :
+    if (!$linknext || $linknext == "javascript:void(0)") :
       print "\n ================= Crawl Successfuly! =================\n";
       exit();
     endif;
