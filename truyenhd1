@@ -1,0 +1,85 @@
+<?php
+
+require_once __DIR__ . "/vendor/autoload.php";
+ini_set('memory_limit', '2048M');
+set_time_limit(-1);
+
+if (!isset($argv[1]) || !isset($argv[2]))
+  exit("Thiếu đối số: [tên file lưu] [link crawl] [sleep = 5]");
+
+$truyenfull = new Truyen($argv[1], $argv[2], isset($argv[3]) ? $argv[3] : 1);
+
+
+
+
+use Goutte\Client;
+
+class Truyen
+{
+  protected $client;
+  protected $crawler;
+  private $sleep;
+  protected $file_save;
+  protected $cron_url;
+  protected $dir = "truyen";
+
+  public function __construct($file_save, $cron_url, $sleep = 1)
+  {
+    $this->setFileSave($file_save);
+    $this->setCronUrl($cron_url);
+    $this->client = new Client();
+    $this->sleep = $sleep;
+    $this->cron();
+  }
+
+  private function getDir()
+  {
+    return __DIR__ . "/" . $this->dir . "/";
+  }
+  public function setFileSave($file_save)
+  {
+    $this->file_save = $file_save . ".txt";
+  }
+
+
+  public function setCronUrl($cron_url)
+  {
+    $this->cron_url = $cron_url;
+  }
+
+  public function saveData()
+  {
+    $title = $this->crawler->filter('h2.text-center', 0)->text();
+    echo $title . "\n";
+    $content = $this->crawler->filter('div.reading', 0)->html();
+    $content = str_replace('<br>', "\n", $content);
+    $content = str_replace('</p>', "\n", $content);
+    $content = strip_tags($content);
+    $savetext = $title . "\n\n" . $content;
+    $file = $this->getDir() . $this->file_save;
+
+    file_put_contents($file, $savetext . PHP_EOL, FILE_APPEND | LOCK_EX);
+  }
+  protected function getLinkNext()
+  {
+    return $this->crawler->filter('.next-chap > a')->eq(1)->attr('href');
+  }
+  private function cronNext()
+  {
+    $linknext = $this->getLinkNext();
+    if ($linknext == "javascript:void(0)") :
+      print "\n ================= Crawl Successfuly! =================\n";
+      exit();
+    endif;
+    sleep($this->sleep);
+    flush();
+    $this->setCronUrl($linknext);
+    $this->cron();
+  }
+  public function cron()
+  {
+    $this->crawler = $this->client->request('GET', $this->cron_url);
+    $this->saveData();
+    $this->cronNext();
+  }
+}
