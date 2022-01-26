@@ -9,7 +9,8 @@
 
 ## Usage
 
-- Chạy lệnh `php truyenfull [ten-file-luu] [link-chuong-bat-dau] [thoi-gian-delay | 5]`
+- Truyện full `php truyenfull [ten-file-luu] [link-chuong-bat-dau] [thoi-gian-delay | 5]`
+- Truyenhd1 `php truyenhd1 [ten-file-luu] [link-chuong-bat-dau] [thoi-gian-delay | 5]`
 
 ## Technical Information
 
